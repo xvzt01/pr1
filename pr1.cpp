@@ -1,37 +1,58 @@
 #include <iostream>
 #include <stdexcept>
 #include <limits>
-
+#include <cmath>
 using namespace std;
 
-int myDivide(int left, int right) {
-    if (right == 0) {
-        throw runtime_error("Деление на ноль!");
+float myDivide(float x, float y) {
+    if (y == 0.0f) {
+        throw runtime_error("Р”РµР»РµРЅРёРµ РЅР° РЅРѕР»СЊ!");
     }
-    if (left == numeric_limits<int>::min() && right == -1) {
-        throw underflow_error("Переполнение снизу (underflow)!");
+    float r = x / y;
+    if (r != 0.0f && fabs(r) < numeric_limits<float>::min()) {
+        throw underflow_error("РџРµСЂРµРїРѕР»РЅРµРЅРёРµ СЃРЅРёР·Сѓ (underflow)!");
     }
-    return left / right;
+    return r;
 }
 
 int main() {
     setlocale(LC_ALL, "Russian");
-    int a, b;
-    cout << "Введите два целых числа: ";
-    cin >> a >> b;
-    try {
-        int res = myDivide(a, b);
-        cout << "Результат: " << res << endl;
+    while (true) {
+        float a, b;
+        cout << "\nР’РІРµРґРёС‚Рµ РґРІР° С‡РёСЃР»Р° (РёР»Рё q РґР»СЏ РІС‹С…РѕРґР°): ";
+        if (!(cin >> a)) {
+            if (cin.fail()) {
+                cin.clear();
+                string s;
+                cin >> s;
+                if (s == "q" || s == "Q") {
+                    cout << "Р’С‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹." << endl;
+                    break;
+                }
+                cout << "РћС€РёР±РєР°: РЅСѓР¶РЅРѕ РІРІРѕРґРёС‚СЊ С‡РёСЃР»Р°!" << endl;
+                continue;
+            }
+        }
+        if (!(cin >> b)) {
+            cin.clear();
+            string s;
+            cin >> s;
+            cout << "РћС€РёР±РєР°: РЅСѓР¶РЅРѕ РІРІРѕРґРёС‚СЊ С‡РёСЃР»Р°!" << endl;
+            continue;
+        }
+        try {
+            float res = myDivide(a, b);
+            cout << "Р РµР·СѓР»СЊС‚Р°С‚: " << res << endl;
+        }
+        catch (underflow_error& e) {
+            cout << "РћС€РёР±РєР°: " << e.what() << endl;
+        }
+        catch (runtime_error& e) {
+            cout << "РћС€РёР±РєР°: " << e.what() << endl;
+        }
+        catch (...) {
+            cout << "РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°!" << endl;
+        }
     }
-    catch (underflow_error& e) {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-    catch (runtime_error& e) {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-    catch (...) {
-        cout << "Неизвестная ошибка!" << endl;
-    }
-    cout << "Программа завершена." << endl;
     return 0;
 }
